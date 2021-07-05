@@ -9,9 +9,9 @@
 
     <Sidebar>
       <ul class="sidebar-panel-nav">
-        <li><router-link to="/home" @click.native="CloseSidebar">Home</router-link></li>
+        <li><router-link to="/about" @click.native="CloseSidebar">About</router-link></li>
         <li><router-link to="/archives" @click.native="CloseSidebar">Puzzle Archives</router-link></li>
-        <li><router-link to="/puzzles" @click.native="CloseSidebar">Meta Puzzle Practice</router-link></li>
+        <li><router-link to="/" @click.native="CloseSidebar">Meta Puzzle Practice</router-link></li>
       </ul>
     </Sidebar>
     <router-view/>

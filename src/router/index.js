@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import About from '@/components/About'
 import Archives from '@/components/Archives'
-import Home from '@/components/Home'
 import Help from '@/components/Help'
 import Puzzles from '@/components/Puzzles'
 import Puzzle from '@/components/Puzzle'
@@ -12,18 +12,13 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Home',
-      component: Home
+      name: 'Puzzles',
+      component: Puzzles
     },
     {
-      path: '/home',
-      name: 'Home',
-      component: Home
-    },
-    {
-      path: '/help',
-      name: 'Help',
-      component: Help
+      path: '/about',
+      name: 'About',
+      component: About
     },
     {
       path: '/archives',

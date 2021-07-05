@@ -11,7 +11,7 @@
       <span class='flavor' v-html="puzzle.flavor"></span>
     </div>
     <div v-if="puzzle.puzzle_content" class='puzzle_content'>
-      <span class='flavor' v-html="puzzle.puzzle_content"></span>
+      <div class='flavor' v-html="puzzle.puzzle_content"></div>
     </div>
     <div v-if="puzzle.notes">
       <p><span class='notes'><b>Notes:</b> {{ puzzle.notes }}</span></p>
@@ -63,7 +63,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
 .title-bar {
    display: flex;
    justify-content: space-between;
@@ -78,9 +78,6 @@ export default {
   font-size: 15px;
   float: right;
 }
-a {
-  color: #000000;
-}
 .random-button {
   font-size: 20px;
   text-align: center;
@@ -90,5 +87,12 @@ a {
   border-radius: 10px;
   border: 2px solid #5e9959;
   box-shadow: 1px 2px #4b7a47;
+}
+td.gridded {
+  border-color: black;
+  border-style: solid;
+  border-width: 2px;
+  min-width: 2em;
+  min-height: 1em;
 }
 </style>

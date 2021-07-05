@@ -16,17 +16,20 @@
                             <button class="call-in" @click="callInAnswer(guess)"> Call it in!</button>
                         </div>
                     </div>
+                    <div class='victory' v-show="!answer_input_visible">
+                        Solved with <span class='victory-percent'>{{solved_percent}}</span> feeders hidden.
+                    </div>
                 </div>
                 <div class="answerbar-content">
                     <div class="history">
                         Submission History
                     </div>
-                    <table class="history-table">
-                        <tr v-for="guess in guesses" >
-                            <td class='guess-text'>{{ guess.text }} </td>
-                            <td class='guess-response' :class="guess.guess_class">{{ guess.response }} </td>
-                        </tr>
-                    </table>
+                    <transition-group name="history" class="history-table" tag="table" @enter="enter" @beforeEnter="beforeEnter" @leave="leave" :css="false">
+                      <tr v-for="(guess, index) in guesses" v-bind:key="bind_index(guess.text,index, guesses.length)">
+                        <td class='guess-text'><div class='history-transition'>{{ guess.text }}</div></td>
+                        <td class='guess-response' :class="guess.guess_class"><div class='history-transition'>{{ guess.response }} </div></td>
+                      </tr>
+                    </transition-group>
                     <div class='backsolve-panel' v-show="backsolve_panel_visible()">
                         <div class="answer-title">
                             Backsolve Time!
@@ -35,12 +38,13 @@
                             <input v-model="backsolve" class="guess" v-on:keyup.enter="callInBacksolve(backsolve)">
                             <button class="call-in" @click="callInBacksolve(backsolve)"> Call it in!</button>
                         </div>
-                        <table class="history-table">
-                            <tr v-for="backsolve in backsolves" >
-                                <td class='guess-text'>{{ backsolve.text }} </td>
-                                <td class='guess-response' :class="backsolve.guess_class">{{ backsolve.response }} </td>
+                        <p></p>
+                        <transition-group name="history" class="history-table" tag="table" @enter="enter" @beforeEnter="beforeEnter" @leave="leave" :css="false">
+                            <tr v-for="(backsolve, index) in backsolves" v-bind:key="bind_index(backsolve.text,index, backsolves.length)">
+                                <td class='guess-text'><div class='history-transition'>{{ backsolve.text }} </div></td>
+                                <td class='guess-response' :class="backsolve.guess_class"><div class='history-transition'>{{ backsolve.response }} </div></td>
                             </tr>
-                        </table>
+                        </transition-group>
 
                     </div>
 
@@ -65,11 +69,18 @@
                 backsolve: "",
                 backsolves: [],
                 answer_input_visible: true,
-                puzzle: store.puzzles.find(o => o.id === this.$route.params.id)
+                solved_percent: 0,
+                puzzle: store.puzzles.find(o => o.id === this.$route.params.id),
+                ptb: "2px",
+                mh: "40px",
             }
         },
         methods: {
             closeAnswerbarPanel: mutations.toggleAnswer,
+            bind_index: function(guess, index, len){
+                let len_from_end = len - index;
+                return guess + '-' + len_from_end;
+            },
             callInAnswer: function(guess){
                 guess = guess.toUpperCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()\s]/g,"");
                 var response = 'INCORRECT';
@@ -77,12 +88,13 @@
                 if (guess == this.$props.solution) {
                     response = 'CORRECT';
                     this.answer_input_visible = false;
+                    this.solved_percent = Math.round(this.unrevealedAnswers().length / this.puzzle.feeders.length * 10000) / 100 + '%';
                     guess_class = 'correct';
                 }
                 else if (this.guesses.map(g => g.text).includes(guess) ) {
                     response = 'STILL INCORRECT';
                 }
-                else if (Object.keys(this.puzzle.solution_hints).includes(guess)) {
+                else if (this.puzzle.solution_hints && Object.keys(this.puzzle.solution_hints).includes(guess)) {
                     response = this.puzzle.solution_hints[guess]
                     guess_class = 'hint';
                 }
@@ -132,6 +144,31 @@
             backsolve_input_visible() {
                 return !this.answer_input_visible && this.unrevealedRemaining();
             },
+            beforeEnter(el) {
+                let divs = el.querySelectorAll("div");
+                for (let i = 0; i < divs.length; i++) {
+                    divs[i].style.maxHeight = "0px";
+                    divs[i].style.paddingTop = "0px";
+                    divs[i].style.paddingBottom = "0px";
+                  }
+            },
+            enter(el, done) {
+                let divs = el.querySelectorAll("div");
+                Velocity(
+                    divs,
+                    { maxHeight: this.mh, paddingTop: this.ptb, paddingBottom: this.ptb },
+                    { duration: 300, complete: done }
+                );
+            },
+            leave(el, done) {
+                let divs = el.querySelectorAll("div");
+                Velocity(
+                    divs,
+                    { maxHeight: "0px", paddingTop: "0px", paddingBottom: "0px" },
+                    //{ maxHeight: this.mh, paddingTop: this.ptb, paddingBottom: this.ptb },
+                    { duration: 300, complete: done }
+                );
+            }
         },
         computed: {
             isPanelOpen() {
@@ -205,6 +242,8 @@
     }
     .guess-text {
       width: 55%;
+      max-width: 150px;
+      word-wrap: break-word;
     }
     .guess-response {
       width: 10em;
@@ -231,5 +270,24 @@
     }
     .incorrect {
       color: #9d2933;
+    }
+    .hitory-transition td {
+      padding: 0;
+    }
+    .history-transition td div {
+      box-sizing: border-box;
+      max-height: 40px;
+      padding: 2px;
+      overflow: hidden;
+    }
+    .victory {
+      text-align: center;
+      color: #F8F0E3;
+      padding: .5rem;
+    }
+    .victory-percent {
+      font-size: 20px;
+      color: #5e9959;
+      padding: .5rem;
     }
 </style>

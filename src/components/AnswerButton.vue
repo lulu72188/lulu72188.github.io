@@ -35,7 +35,6 @@
         box-shadow: 1px 2px #4b7a47;
     }
 
-    /* remove blue outline */
     button:focus {
         outline: 0;
     }

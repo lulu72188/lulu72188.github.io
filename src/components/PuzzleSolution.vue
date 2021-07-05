@@ -1,7 +1,9 @@
 <template>
   <div class="puzzle-solution">
-    <div v-if="isAnswerRevealed" class="revealed-answer">{{ feeder_answer }}</div>
-    <div v-else @click.prevent="revealAnswer" class="hidden-answer">???</div>
+    <transition name="feeder" mode="out-in">
+      <div key=1 v-if="isAnswerRevealed" class="revealed-answer">{{ feeder_answer }}</div>
+      <div key=2 v-else @click.prevent="revealAnswer" class="hidden-answer">???</div>
+    </transition>
   </div>
 </template>
 
@@ -42,5 +44,11 @@ export default {
   box-shadow: 1px 2px #4b7a47;
   cursor: pointer;
   text-align: center;
+}
+.feeder-enter-active, .feederrevealed-leave-active {
+  transition: opacity 1s;
+}
+.feeder-enter, .feederrevealed-leave-to {
+  opacity: 0
 }
 </style>

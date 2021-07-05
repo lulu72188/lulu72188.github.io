@@ -2,8 +2,10 @@
   <div class="content">
     <ul>
       <li v-for="hint in hints" :key="hint.id">
-        <span class="hint-button" @click.prevent="revealHint(hint.id)" v-if="!isHintRevealed(hint.id)">{{ hint.name }}</span>
-        <span class="hint-text" v-else><b>{{ hint.name }}:</b> {{ hint.text }}</span>
+        <transition name="hintrevealed" mode="out-in">
+            <span key=1 class="hint-button" @click.prevent="revealHint(hint.id)" v-if="!isHintRevealed(hint.id)">{{ hint.name }}</span>
+            <span key=2 class="hint-text" v-else><b>{{ hint.name }}: </b><span v-html="hint.text"></span></span>
+        </transition>
       </li>
     </ul>
   </div>
@@ -58,6 +60,14 @@ li {
 </style>
 <style>
 .highlight-text {
+  transition: 1s;
   color: #b4a5b8;
+  font-size: 17px;
+}
+.hintrevealed-enter-active, .hintrevealed-leave-active {
+  transition: opacity .5s;
+}
+.hintrevealed-enter, .hintrevealed-leave-to {
+  opacity: 0
 }
 </style>
